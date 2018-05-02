@@ -8,11 +8,7 @@ if (isset($_POST['contenu'])) {
 }
 
 if (isset($_GET['delete'])) {
-    if (is_dir($_GET['delete'])) {
-        rmdir($_GET['delete']);
-    } else {
-        unlink($_GET['delete']);
-    }
+    delete_dir($_GET['delete']);
 }
 
 
@@ -53,5 +49,24 @@ if (isset($_GET['fileEdit'])) {
 
 <?php if (isset($errorsFileExtension)){
     echo $errorsFileExtension;
-} ?>
+}
+
+function delete_dir($target) {
+    if(is_dir($target)){
+        $files = glob( $target . '*', GLOB_MARK ); //GLOB_MARK adds a slash to directories returned
+
+        foreach( $files as $file )
+        {
+            delete_dir( $file );
+        }
+
+        rmdir( $target );
+    } elseif(is_file($target)) {
+        unlink( $target );
+    }
+    return header("location: index.php");
+}
+
+
+?>
 <?php include('inc/foot.php'); ?>
